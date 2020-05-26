@@ -15,7 +15,7 @@ class bcolors:
 
 
 class Person:
-    def __init__(self, hp, mp, atk, df, magic, items):
+    def __init__(self, name, hp, mp, atk, df, magic, items):
         self.maxhp = hp
         self.hp = hp
         self.maxmp = mp
@@ -26,6 +26,7 @@ class Person:
         self.magic = magic
         self.items = items
         self.actions = ['Attack', 'Magic', 'Items', 'Defend', 'Heal', 'Recharge']
+        self.name = name
 
     def generate_dmg(self):
         return random.randrange(self.atkl, self.atkh)
@@ -66,25 +67,34 @@ class Person:
 
     def choose_action(self):
         i = 1
-        print("Actions : ")
+        print("\n" + bcolors.BOLD + self.name + bcolors.ENDC)
+        print(bcolors.BOLD + bcolors.OKBLUE + "Actions : " + bcolors.ENDC)
         for item in self.actions:
-            print(" " + str(i) + ": " + item)
+            print("    " + str(i) + ": " + item)
             i =  i + 1
     
     def choose_spells(self):
         i = 1
-        print("Magic : ")
+        print("\n")
+        print(bcolors.BOLD + bcolors.FAIL + "Magic : " + bcolors.ENDC)
         for spell in self.magic:
             if 'Dark' in spell.name:
-                print(str(i) + ": ",spell.name, "\t", "cost : ",spell.cost, "\t", "damage : ",spell.dmg)
+                print("    " + str(i) + ": ",spell.name, "\t\t", "cost : ",spell.cost, "\t\t", "damage : ",spell.dmg)
                 i = i + 1
                 continue
-            print(str(i) + ": ",spell.name, "\t\t", "cost : ",spell.cost, "\t", "damage : ",spell.dmg)    
+            print("    " + str(i) + ": ",spell.name, "\t\t\t", "cost : ",spell.cost, "\t\t", "damage : ",spell.dmg)    
             i = i + 1
     
     def choose_items(self):
         i = 1
         print("Inventory")
         for item in self.items:
-            print(" " + str(i) + ": ",item.name, " : ",item.desc," : x5")
+            print("    " + str(i) + ": ",str(item['item'].name), " : ",str(item['item'].desc)," : x"+str(item['quantity']))
             i =  i + 1
+
+    def get_stats(self):
+        print("\n")
+        print(bcolors.BOLD + str(self.name) + "  " + str(self.hp) + "/" + str(self.maxhp) + '|' + bcolors.OKGREEN + "███████████              " + bcolors.ENDC + "|" + "         " 
+        + str(self.mp) + "/" + str(self.maxmp) + "|"  + bcolors.OKBLUE + "██████████" + bcolors.ENDC + "|")
+
+
