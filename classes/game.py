@@ -78,11 +78,7 @@ class Person:
         print("\n")
         print(bcolors.BOLD + bcolors.FAIL + "Magic : " + bcolors.ENDC)
         for spell in self.magic:
-            if 'Dark' in spell.name:
-                print("    " + str(i) + ": ",spell.name, "\t\t", "cost : ",spell.cost, "\t\t", "damage : ",spell.dmg)
-                i = i + 1
-                continue
-            print("    " + str(i) + ": ",spell.name, "\t\t\t", "cost : ",spell.cost, "\t\t", "damage : ",spell.dmg)    
+            print("    " + str(i) + ": %-12s"%(spell.name), "\t\t", "cost : ",spell.cost, "\t\t", "damage : ",spell.dmg)    
             i = i + 1
     
     def choose_items(self):
@@ -92,9 +88,48 @@ class Person:
             print("    " + str(i) + ": ",str(item['item'].name), " : ",str(item['item'].desc)," : x"+str(item['quantity']))
             i =  i + 1
 
-    def get_stats(self):
-        print("\n")
-        print(bcolors.BOLD + str(self.name) + "  " + str(self.hp) + "/" + str(self.maxhp) + '|' + bcolors.OKGREEN + "███████████              " + bcolors.ENDC + "|" + "         " 
-        + str(self.mp) + "/" + str(self.maxmp) + "|"  + bcolors.OKBLUE + "██████████" + bcolors.ENDC + "|")
+    def get_enemy_stats(self):
+        hp_bar = ""
+        hpbar_ticks = (self.hp / self.maxhp) * 100 / 2
 
+        while hpbar_ticks > 0:
+            hp_bar += "█"
+            hpbar_ticks -= 1
+
+        while len(hp_bar) < 50:
+            hp_bar +=" "
+
+        print("                     __________________________________________________")
+        print(bcolors.BOLD + str(self.name) + "   " + "%5s"%str(self.hp) + "/" + str(self.maxhp) + '|' + bcolors.FAIL + hp_bar + bcolors.ENDC + "|")
+
+    def get_stats(self):
+
+        hp_bar = ""
+        hpbar_ticks = (self.hp / self.maxhp) * 100 / 4
+
+        mp_bar = ""
+        mpbar_ticks = (self.mp / self.maxmp) * 100 / 10
+
+        while hpbar_ticks > 0:
+            hp_bar += "█"
+            hpbar_ticks -= 1
+
+        while len(hp_bar) < 25:
+            hp_bar +=" "
+
+        while mpbar_ticks > 0:
+            mp_bar += "█"
+            mpbar_ticks -= 1
+
+        while len(mp_bar) < 10:
+            mp_bar +=" "
+
+        print("                    ___________________________                 ____________")
+        print(bcolors.BOLD + str(self.name) + "  " + "%4s"%str(self.hp) + "/" + "%4s"%str(self.maxhp) + '|' + bcolors.OKGREEN + hp_bar + bcolors.ENDC + "|" + "         " 
+        + "%4s"%str(self.mp) + "/" + str(self.maxmp) + "|"  + bcolors.OKBLUE + mp_bar + bcolors.ENDC + "|")
+
+    def select_target(self, num):
+        start = 0
+        last = num
+        return random.randrange(start, last)
 
