@@ -100,7 +100,7 @@ class Person:
             hp_bar +=" "
 
         print("                     __________________________________________________")
-        print(bcolors.BOLD + str(self.name) + "   " + "%5s"%str(self.hp) + "/" + str(self.maxhp) + '|' + bcolors.FAIL + hp_bar + bcolors.ENDC + "|")
+        print(bcolors.BOLD + str(self.name) + "   " + "%5s"%str(self.hp) + "/" +  "%5s"%str(self.maxhp) + '|' + bcolors.FAIL + hp_bar + bcolors.ENDC + "|")
 
     def get_stats(self):
 
@@ -124,7 +124,7 @@ class Person:
         while len(mp_bar) < 10:
             mp_bar +=" "
 
-        print("                    ___________________________                 ____________")
+        print("                    _________________________                   __________")
         print(bcolors.BOLD + str(self.name) + "  " + "%4s"%str(self.hp) + "/" + "%4s"%str(self.maxhp) + '|' + bcolors.OKGREEN + hp_bar + bcolors.ENDC + "|" + "         " 
         + "%4s"%str(self.mp) + "/" + str(self.maxmp) + "|"  + bcolors.OKBLUE + mp_bar + bcolors.ENDC + "|")
 
@@ -132,4 +132,15 @@ class Person:
         start = 0
         last = num
         return random.randrange(start, last)
+
+    def choose_target(self, enemies):
+        i = 1
+        print("Target :")
+        for enemy in enemies:
+            if enemy.get_hp() != 0:
+                print("    " + str(i) + ": ",str(enemy.name))
+                i =  i + 1
+        
+        choice = int(input("Choose targer : ")) - 1
+        return choice
 

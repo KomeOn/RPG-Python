@@ -48,16 +48,22 @@ player_items = [
                 {'item': bomb, 'quantity': 10},
                 ]
 
+
 pr1 = Person("Larvoc  ", 3500, 180, 1400, 1100, player_spells, player_items)
 pr2 = Person("Preacher", 3700, 160, 1700, 600, player_spells, player_items)
 pr3 = Person("Dinker  ", 3600, 260, 2900, 1000, player_spells, player_items)
 
-en1 = Person("Sokinc", 71000, 260, 500, 2100, [], [])
+en1 = Person("Soknic", 71000, 260, 500, 2100, [], [])
+en2 = Person("Mikus ", 2300, 200, 680, 220, [], [])
+en3 = Person("Sukius", 2300, 200, 680, 220, [], [])
 
 players = [pr1, pr2, pr3]
 
+enemies = [en2, en1, en3]
+
 running = True
 
+enemies_copy = enemies.copy()
 
 print(bcolors.FAIL + bcolors.FAIL + "An Enemy Appeared" + bcolors.ENDC)
 
@@ -70,7 +76,9 @@ while running:
         player.get_stats()
 
     print("\n")
-    en1.get_enemy_stats()    
+    
+    for enemy in enemies:
+        enemy.get_enemy_stats()    
     
     print("\n")    
 
@@ -83,9 +91,13 @@ while running:
 
         if index == 0:
             dmg = player.generate_dmg()
-            en1.take_dmg(dmg)
-            print(player.name + " attacks for ", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(en1.name) + en1.name + " heatlh points : ", bcolors.OKGREEN, en1.get_hp(), bcolors.ENDC)
-            
+            sel = player.choose_target(enemies)
+            enemies[sel].take_dmg(dmg)
+            print(player.name.replace(" ","") + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(enemies[sel].name.replace(" ","")) + enemies[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, enemies[sel].get_hp(), bcolors.ENDC)
+            if enemies[sel].get_hp() == 0:
+                print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                del enemies[sel]
+
         if index == 1:
             player.choose_spells()
             mg_choice = int(input("Choose magic : ")) - 1
@@ -106,11 +118,17 @@ while running:
 
             if spell.typ == 'white':
                 player.heal(mg_dmg)
-                print(bcolors.OKBLUE + player.name + " heals for", str(mg_dmg), "health points. " + bcolors.ENDC)
+                print(bcolors.OKBLUE + player.name.replace(" ","") + " heals for", str(mg_dmg), "health points. " + bcolors.ENDC)
+
             elif spell.typ == 'black':
-                en1.take_dmg(mg_dmg)
-                print(bcolors.OKBLUE + "\n" + player.name + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage" + bcolors.ENDC)
-            
+                sel = player.choose_target(enemies)
+                enemies[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + player.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + enemies[sel].name.replace(" ","") + bcolors.ENDC)
+                if enemies[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                    del enemies[sel]
+
+                    
         if index == 2:
             player.choose_items()
             item_choice = int(input("Choose Item : ")) - 1
@@ -132,15 +150,20 @@ while running:
                 print(bcolors.OKGREEN + str(item.name) + " heals for ",item.prop, " HP" + bcolors.ENDC)
                 
             elif item.typ == 'handy':
-                en1.take_dmg(item.prop)
-                print(en1.name + " took " + bcolors.FAIL, item.prop, bcolors.ENDC + " amount of damage.")
+                sel = player.choose_target(enemies)
+                enemies[sel].take_dmg(item.prop)
+                print(enemies[sel].name.replace(" ","") + " took " + bcolors.FAIL, item.prop, bcolors.ENDC + " amount of damage.")
+                if enemies[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                    del enemies[sel]
+
                 
             elif item.typ == 'elixer':
                 if item.name == "Hi-Elixer":
                     for i in players:
                         i.hp = i.maxhp
                         i.mp = i.maxmp
-                        print(" " + bcolors.BOLD + bcolors.HEADER + i.name + "is fully healed {hp} and recharged {mp}".format(hp=i.maxhp, mp=i.maxmp) + bcolors.ENDC)
+                        print(" " + bcolors.BOLD + bcolors.HEADER + i.name.replace(" ","") + "is fully healed {hp} and recharged {mp}".format(hp=i.maxhp, mp=i.maxmp) + bcolors.ENDC)
                 else:
                     player.hp = player.maxhp
                     player.mp = player.maxmp
@@ -152,22 +175,36 @@ while running:
     len_team = len(players)
     sel = en1.select_target(len_team)
     players[sel].take_dmg(dmg)
-    print(en1.name + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(players[sel].name) + players[sel].name + " heatlh points : ", bcolors.OKGREEN, players[sel].get_hp(), bcolors.ENDC)
+    print(en1.name.replace(" ","") + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(players[sel].name.replace(" ","")) + players[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, players[sel].get_hp(), bcolors.ENDC)
 
     print("---------------------------------------------------------------")
     
-    if en1.get_hp() == 0 and pr1.get_hp() == 0 :
-        print(bcolors.FAIL + "Enemy defeated!!!" + bcolors.ENDC)
-        print(bcolors.FAIL + "Player defeated!!!" + bcolors.ENDC)        
+    team_h = len(players)
+    team_v = len(enemies)
+
+    defeat_teamh = 0
+    defeat_teamv = 0
+
+    for enemy in enemies:
+        if enemy.get_hp() == 0:
+            defeat_teamv += 1
+    
+    for player in players:
+        if player.get_hp() == 0:
+            defeat_teamh += 1
+
+    if defeat_teamh == team_h and defeat_teamv == team_v :
+        print(bcolors.FAIL + "Enemies defeated!!!" + bcolors.ENDC)
+        print(bcolors.FAIL + "Heroes defeated!!!" + bcolors.ENDC)        
         print(bcolors.WARNING + "But at what cost!!!" + bcolors.ENDC)
         running = False
 
-    elif en1.get_hp() == 0:
-        print(bcolors.FAIL + "Enemy defeated!!!" + bcolors.ENDC)
+    elif defeat_teamv == team_v :
+        print(bcolors.FAIL + "Enemies defeated!!!" + bcolors.ENDC)
         print(bcolors.OKGREEN + "You win!!" + bcolors.ENDC)
         running = False
 
-    elif pr1.get_hp() == 0:
-        print(bcolors.FAIL + "Player defeated!!!" + bcolors.ENDC)
+    elif defeat_teamh == team_h :
+        print(bcolors.FAIL + "Heroes defeated!!!" + bcolors.ENDC)
         print(bcolors.FAIL + "You lose!!" + bcolors.ENDC)
         running = False
