@@ -1,26 +1,27 @@
 from classes.game import Person, bcolors
 from classes.spells import Spell
 from classes.inventory import Items
+import random
 
 # Natural Magic
-fire = Spell("Fire", 25, 120, "natural")
-thunder = Spell("Thunder", 20, 180, "natural")
-water = Spell("Water", 25, 140, "natural")
-wind = Spell("Wind", 25, 160, "natural")
-earth = Spell("Earth", 25, 180, "natural")
+fire = Spell("Fire", 25, 520, "natural")
+thunder = Spell("Thunder", 20, 580, "natural")
+water = Spell("Water", 25, 540, "natural")
+wind = Spell("Wind", 25, 560, "natural")
+earth = Spell("Earth", 25, 580, "natural")
 
 # Enhanced Magic
-blizzard = Spell("Blizzard", 25, 260, "enhanced")
-boulder = Spell("Boulder", 20, 240, "enhanced")
-iceS = Spell("Ice Spike", 25, 280, "enhanced")
-magma = Spell("Magma", 25, 240, "enhanced")
-quake = Spell("Earthquake", 20, 240, "enhanced")
+blizzard = Spell("Blizzard", 25, 660, "enhanced")
+boulder = Spell("Boulder", 20, 640, "enhanced")
+iceS = Spell("Ice Spike", 25, 680, "enhanced")
+magma = Spell("Magma", 25, 640, "enhanced")
+quake = Spell("Earthquake", 20, 640, "enhanced")
 
 # Black Magic
-darkT = Spell("Dark Thunder", 20, 280, "black")
-meteor = Spell("Meteor", 20, 260, "black")
-darkF = Spell("Dark Flames", 25, 300, "black")
-darkness = Spell("Darkness", 25, 300, "black")
+darkT = Spell("Dark Thunder", 20, 880, "black")
+meteor = Spell("Meteor", 20, 860, "black")
+darkF = Spell("Dark Flames", 25, 900, "black")
+darkness = Spell("Darkness", 25, 900, "black")
 
 # White Magic
 cure = Spell("Cure", 25, 800, "white")
@@ -48,14 +49,16 @@ player_items = [
                 {'item': bomb, 'quantity': 10},
                 ]
 
+enemyB_spells = [water, earth, blizzard, iceS, meteor, darkness, cure, cura]
+enemyM_spells = [water, blizzard, meteor, darkness, cure]
 
 pr1 = Person("Larvoc  ", 3500, 180, 1400, 1100, player_spells, player_items)
 pr2 = Person("Preacher", 3700, 160, 1700, 600, player_spells, player_items)
 pr3 = Person("Dinker  ", 3600, 260, 2900, 1000, player_spells, player_items)
 
-en1 = Person("Soknic", 71000, 260, 500, 2100, [], [])
-en2 = Person("Mikus ", 2300, 200, 680, 220, [], [])
-en3 = Person("Sukius", 2300, 200, 680, 220, [], [])
+en1 = Person("Soknic", 71000, 260, 740, 2100, enemyB_spells, [])
+en2 = Person("Mikus ", 2300, 200, 680, 220, enemyM_spells, [])
+en3 = Person("Sukius", 2300, 200, 680, 220, enemyM_spells, [])
 
 players = [pr1, pr2, pr3]
 
@@ -93,12 +96,12 @@ while running:
             dmg = player.generate_dmg()
             sel = player.choose_target(enemies)
             enemies[sel].take_dmg(dmg)
-            print(player.name.replace(" ","") + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(enemies[sel].name.replace(" ","")) + enemies[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, enemies[sel].get_hp(), bcolors.ENDC)
+            print(player.name.replace(" ","") + " attacks for " + bcolors.FAIL + str(dmg) + bcolors.ENDC, "points of damage to {}. ".format(enemies[sel].name.replace(" ","")) + enemies[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, enemies[sel].get_hp(), bcolors.ENDC)
             if enemies[sel].get_hp() == 0:
-                print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated." + bcolors.ENDC)
                 del enemies[sel]
 
-        if index == 1:
+        elif index == 1:
             player.choose_spells()
             mg_choice = int(input("Choose magic : ")) - 1
 
@@ -127,9 +130,24 @@ while running:
                 if enemies[sel].get_hp() == 0:
                     print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
                     del enemies[sel]
+            
+            elif spell.typ == 'natural':
+                sel = player.choose_target(enemies)
+                enemies[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + player.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + enemies[sel].name.replace(" ","") + bcolors.ENDC)
+                if enemies[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                    del enemies[sel]
 
-                    
-        if index == 2:
+            elif spell.typ == 'enhanced':
+                sel = player.choose_target(enemies)
+                enemies[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + player.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + enemies[sel].name.replace(" ","") + bcolors.ENDC)
+                if enemies[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + enemies[sel].name + " has been defeated.")
+                    del enemies[sel]
+                  
+        elif index == 2:
             player.choose_items()
             item_choice = int(input("Choose Item : ")) - 1
 
@@ -168,17 +186,14 @@ while running:
                     player.hp = player.maxhp
                     player.mp = player.maxmp
                     print("HP and MP is fully restored")
-                
-                
-    enemy = 1
-    dmg = en1.generate_dmg()
-    len_team = len(players)
-    sel = en1.select_target(len_team)
-    players[sel].take_dmg(dmg)
-    print(en1.name.replace(" ","") + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(players[sel].name.replace(" ","")) + players[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, players[sel].get_hp(), bcolors.ENDC)
 
-    print("---------------------------------------------------------------")
-    
+        elif index == 3:
+            defence = player.generate_def()
+        
+        elif index == 4:
+            mana = player.rechargeMP()
+            print(bcolors.BOLD + bcolors.HEADER + player.name.replace(" ","") + " recharges for MP. " + "Mana points : {}".format(player.get_mp()))
+
     team_h = len(players)
     team_v = len(enemies)
 
@@ -208,3 +223,53 @@ while running:
         print(bcolors.FAIL + "Heroes defeated!!!" + bcolors.ENDC)
         print(bcolors.FAIL + "You lose!!" + bcolors.ENDC)
         running = False
+
+    print("\n\n")
+
+    for enemy in enemies:
+        enemy_choice = random.randrange(0, 2)
+
+        len_team = len(players)
+        sel = en1.select_target(len_team)
+        
+
+        if enemy_choice == 0:
+            dmg = enemy.generate_dmg()
+            players[sel].take_dmg(dmg)
+            print(enemy.name.replace(" ","") + " attacks for", bcolors.FAIL, dmg, bcolors.ENDC, "points of damage to {}. ".format(players[sel].name.replace(" ","")) + players[sel].name.replace(" ","") + " heatlh points : ", bcolors.OKGREEN, players[sel].get_hp(), bcolors.ENDC)
+
+        elif enemy_choice == 1:
+            spell, mg_dmg = enemy.choose_magic()
+            enemy.reduce_mp(spell.cost)
+            players[sel].take_dmg(mg_dmg)
+
+            if spell.typ == 'white':
+                enemy.heal(mg_dmg)
+                print(bcolors.OKBLUE + enemy.name.replace(" ","") + " heals for", str(mg_dmg), "health points. " + bcolors.ENDC)
+
+            elif spell.typ == 'black':
+                players[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + enemy.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + players[sel].name.replace(" ","") + bcolors.ENDC)
+                if players[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + players[sel].name + " has been defeated.")
+                    del players[sel]
+            
+            elif spell.typ == 'natural':
+                players[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + enemy.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + players[sel].name.replace(" ","") + bcolors.ENDC)
+                if players[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + players[sel].name + " has been defeated.")
+                    del players[sel]
+            
+            elif spell.typ == 'enhanced':
+                players[sel].take_dmg(mg_dmg)
+                print(bcolors.OKBLUE + "\n" + enemy.name.replace(" ","") + " casted " + spell.name + " spell that deals", str(mg_dmg), "points of damage to " + players[sel].name.replace(" ","") + bcolors.ENDC)
+                if players[sel].get_hp() == 0:
+                    print(bcolors.BOLD + bcolors.FAIL + players[sel].name + " has been defeated.")
+                    del players[sel]
+        #elif enemy_choice == 2:
+
+
+        #print("---------------------------------------------------------------")
+    
+    

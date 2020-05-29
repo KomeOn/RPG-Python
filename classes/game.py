@@ -25,7 +25,7 @@ class Person:
         self.df = df
         self.magic = magic
         self.items = items
-        self.actions = ['Attack', 'Magic', 'Items', 'Defend', 'Heal', 'Recharge']
+        self.actions = ['Attack', 'Magic', 'Items', 'Defend', 'Recharge']
         self.name = name
 
     def generate_dmg(self):
@@ -45,10 +45,12 @@ class Person:
         if self.hp > self.maxhp:
             self.hp = self.maxhp
 
-    def rechargeMP(self, points):
-        self.mp = self.mp + points
+    def rechargeMP(self):
+        points = self.maxmp * ((self.hp/self.maxhp) * 100)
+        self.mp = self.mp + int(points)
         if self.mp > self.maxmp:
             self.mp = self.maxmp
+        return self.mp
 
     def get_hp(self):
         return self.hp
@@ -92,6 +94,9 @@ class Person:
         hp_bar = ""
         hpbar_ticks = (self.hp / self.maxhp) * 100 / 2
 
+        mp_bar = ""
+        mpbar_ticks = (self.mp / self.maxmp) * 100 / 10
+
         while hpbar_ticks > 0:
             hp_bar += "█"
             hpbar_ticks -= 1
@@ -99,8 +104,16 @@ class Person:
         while len(hp_bar) < 50:
             hp_bar +=" "
 
-        print("                     __________________________________________________")
-        print(bcolors.BOLD + str(self.name) + "   " + "%5s"%str(self.hp) + "/" +  "%5s"%str(self.maxhp) + '|' + bcolors.FAIL + hp_bar + bcolors.ENDC + "|")
+        while mpbar_ticks > 0:
+            mp_bar += "█"
+            mpbar_ticks -= 1
+
+        while len(mp_bar) < 10:
+            mp_bar +=" "
+
+        print("                     __________________________________________________        ")
+        print(bcolors.BOLD + str(self.name) + "   " + "%5s"%str(self.hp) + "/" +  "%5s"%str(self.maxhp) + '|' + bcolors.FAIL + hp_bar + bcolors.ENDC + "|" + "   "
+         + "%4s"%str(self.mp) + "/" +  "%4s"%str(self.maxmp) + '|' + bcolors.OKBLUE + mp_bar + bcolors.ENDC + "|")
 
     def get_stats(self):
 
@@ -141,6 +154,18 @@ class Person:
                 print("    " + str(i) + ": ",str(enemy.name))
                 i =  i + 1
         
-        choice = int(input("Choose targer : ")) - 1
+        choice = int(input("Choose target : ")) - 1
         return choice
 
+    def choose_magic(self):
+        magic_choice = random.randrange(0, len(self.magic))
+        spell = self.magic[magic_choice]
+        magic_dmg = spell.generate_mgdmg()
+
+        pct = self.hp / self.maxhp * 100
+
+        if spell.cost > self.mp or (spell.typ == 'white' and pct > 50 ):
+            self.choose_magic()
+        
+        else:
+            return spell, magic_dmg
