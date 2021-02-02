@@ -20,9 +20,10 @@ class Person:
         self.hp = hp
         self.maxmp = mp
         self.mp = mp
-        self.atkl = atk - 5
-        self.atkh = atk + 15
-        self.df = df
+        self.atkl = int(atk - (5/100)*atk)
+        self.atkh = int(atk + (15/100)*atk)
+        self.dfl = int(df - (5/100)*df)
+        self.dfh = int(df + (15/100)*df)
         self.magic = magic
         self.items = items
         self.actions = ['Attack', 'Magic', 'Items', 'Defend', 'Recharge']
@@ -32,7 +33,7 @@ class Person:
         return random.randrange(self.atkl, self.atkh)
 
     def generate_def(self):
-        return random.randrange(0, self.df)
+        return random.randrange(self.dfl, self.dfh)
 
     def take_dmg(self, dmg):
         self.hp = self.hp - dmg
@@ -46,7 +47,7 @@ class Person:
             self.hp = self.maxhp
 
     def rechargeMP(self):
-        points = self.maxmp * ((self.hp/self.maxhp) * 100)
+        points = self.maxmp * ((self.mp/self.maxmp) * 100)
         self.mp = self.mp + int(points)
         if self.mp > self.maxmp:
             self.mp = self.maxmp
@@ -168,4 +169,5 @@ class Person:
             self.choose_magic()
         
         else:
+            print("spell:", spell.name)
             return spell, magic_dmg
